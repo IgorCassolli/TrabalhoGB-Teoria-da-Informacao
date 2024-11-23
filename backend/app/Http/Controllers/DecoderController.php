@@ -11,6 +11,7 @@ class DecoderController extends Controller
         $wordToDecode = (string) $request->input('string');
         $decodedString = '';
         $decodedRepititionCode = '';
+
         $i = 0;
         while ($i < strlen($wordToDecode)) {
             $threeBits = substr($wordToDecode, $i, 3);
@@ -20,13 +21,14 @@ class DecoderController extends Controller
             } else {
                 $decodedRepititionCode .= "1";
             }
+
             $i = $i + 3;
         }
 
         $bitsByGroup = str_split($decodedRepititionCode, 8);
         foreach ($bitsByGroup as $group) {
             $decimal = bindec($group);
-            $decodedString .= chr($decimal);
+            $decodedString .= mb_convert_encoding(chr($decimal), 'UTF-8', 'ISO-8859-1');
         }
 
         return response()->json(['decodedString' => $decodedString]);
